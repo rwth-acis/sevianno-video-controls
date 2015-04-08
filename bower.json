@@ -1,0 +1,29 @@
+{
+  "name": "sevianno-video-controls",
+  "version": "0.0.0",
+  "authors": [
+    "Anonymous <anonymous@example.com>"
+  ],
+  "description": "Element providing solution to no problem in particular.",
+  "keywords": [
+    "web-component",
+    "web-components",
+    "polymer",
+    "seed"
+  ],
+  "main": "sevianno-video-controls.html",
+  "license": "MIT",
+  "homepage": "https://github.com/<USERNAME>/sevianno-video-controls/",
+  "ignore": [
+    "/.*",
+    "/tests/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^0.5.4",
+    "paper-icon-button": "Polymer/paper-icon-button#~0.5.5",
+    "paper-slider": "Polymer/paper-slider#~0.5.5"
+  },
+  "devDependencies": {
+    "web-component-tester": "*"
+  }
+}
