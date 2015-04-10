@@ -10,6 +10,7 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../paper-slider/paper-slider.html">
+<link rel="import" href="../core-signals/core-signals.html">
 
 <!--
 Element providing solution to no problem in particular.
@@ -29,10 +30,15 @@ Element providing solution to no problem in particular.
 
     <link rel="stylesheet" href="sevianno-video-controls.css">
 
-    <paper-icon-button id="playButton" icon="send" on-tap="{{onPlay}}"></paper-icon-button>
-    <paper-slider></paper-slider>
+    <!--<paper-icon-button id="playButton" icon="send" on-tap="{{onPlay}}"></paper-icon-button>-->
+	<paper-icon-button id="playButton" icon="send" on-click="{{onPlay}}"></paper-icon-button>
+    <paper-slider id="slider" on-change="{{sliderChange}}" flex></paper-slider>
+	
     <!--<content></content>-->
-
+	<core-signals on-core-signal-play="{{play}}"></core-signals>
+    <core-signals on-core-signal-pause="{{pause}}"></core-signals>
+    <core-signals on-core-signal-timeupdate="{{timeupdate}}"></core-signals>
+    <core-signals on-core-signal-progress-amount="{{progress_amount}}"></core-signals>
   </template>
 
   <script>
@@ -55,6 +61,7 @@ Element providing solution to no problem in particular.
        * @default false
        */
       fancy: false,
+	  togged: false,
 
       ready: function() {
         // Ready is a lifecycle callback.
@@ -70,9 +77,12 @@ Element providing solution to no problem in particular.
        */
       onPlay: function() {
         // use autobinding feature by polymer
-        this.$.playButton.icon = this.playing ? "send" : "filter-list";
+        /*this.$.playButton.icon = this.playing ? "send" : "filter-list";
         this.playing = !this.playing;
-        this.play();
+		this.fire('sevianno-video-controls-onPlay');
+        this.play();*/
+		if(!this.togged) this.fire('core-signal', { name: "play" });
+		else this.fire('core-signal', { name: "pause" });
       },
 
       /**
@@ -104,7 +114,34 @@ Element providing solution to no problem in particular.
        */
       fireLasers: function() {
         this.fire('sevianno-video-controls-lasers-success', { sound: 'Pew pew pew!' });
-      }
+      },
+	  
+	  
+	  playClick: function() {
+		if(!this.togged) this.fire('core-signal', { name: "play" });
+		else this.fire('core-signal', { name: "pause" });
+	  },
+	  sliderChange: function(e, detail, sender) {
+		this.fire('core-signal', { name: 'change', data: sender.immediateValue });
+		console.log(sender.immediateValue);
+	  },
+	  play: function() {
+		console.log("play");
+		this.togged = true;
+		this.$.playButton.icon = "filter-list";
+	  },
+	  pause: function() {
+		console.log("pause");
+		this.togged = false;
+		this.$.playButton.icon = "send";
+	  },
+	  timeupdate: function(e, detail, sender) {
+		this.$.slider.value = detail;
+		console.log(detail);
+	  },
+	  progress_amount: function(e, detail, sender) {
+		this.$.slider.secondaryProgress = detail;
+	  }
 
     });
 
