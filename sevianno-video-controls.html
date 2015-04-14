@@ -123,7 +123,7 @@ Element providing solution to no problem in particular.
 	  },
 	  sliderChange: function(e, detail, sender) {
 		this.fire('core-signal', { name: 'change', data: sender.immediateValue });
-		console.log(sender.immediateValue);
+		//console.log(sender.immediateValue);
 	  },
 	  play: function() {
 		console.log("play");
@@ -137,7 +137,7 @@ Element providing solution to no problem in particular.
 	  },
 	  timeupdate: function(e, detail, sender) {
 		this.$.slider.value = detail;
-		console.log(detail);
+		//console.log(detail);
 	  },
 	  progress_amount: function(e, detail, sender) {
 		this.$.slider.secondaryProgress = detail;
