@@ -31,27 +31,40 @@ Element providing solution to no problem in particular.
     <link rel="stylesheet" href="sevianno-video-controls.css">
 
     <!--<paper-icon-button id="playButton" icon="send" on-tap="{{onPlay}}"></paper-icon-button>-->
-	<paper-icon-button id="playButton" icon="send" on-click="{{onPlay}}"></paper-icon-button>
-    <paper-slider id="slider" on-change="{{sliderChange}}" flex></paper-slider>
 	
+	<paper-icon-button id="playButton" icon="send" on-click="{{onPlay}}"></paper-icon-button>
+	<div id="slider-content">
+    <paper-slider id="slider" on-change="{{sliderChange}}" flex></paper-slider>
+	<div id="slider-marker">
+	<template id="slider-markers" repeat="{{marker in markers}}">
+            <div class="verticalLine" style="left:{{marker.horizontalOffset}}px;"></div>
+     </template>
+	<!-- <div class="verticalLine" style="left:16px;"></div>
+	<div class="verticalLine" style="left:32px;"></div>
+	<div class="verticalLine" style="left:50px;"></div>
+	<div class="verticalLine" style="left:100px;"></div>
+	<div class="verticalLine" style="left:180px;"></div> -->
+	</div>
+	</div>
     <!--<content></content>-->
 	<core-signals on-core-signal-play="{{play}}"></core-signals>
     <core-signals on-core-signal-pause="{{pause}}"></core-signals>
     <core-signals on-core-signal-timeupdate="{{timeupdate}}"></core-signals>
     <core-signals on-core-signal-progress-amount="{{progress_amount}}"></core-signals>
+	<core-signals on-core-signal-show-marker="{{showMarker}}"></core-signals>
   </template>
 
   <script>
 
     Polymer({
       /**
-       * The `author` attribute sets an initial author
+       * The `authors` attribute sets contributors author
        *
-       * @attribute author
-       * @type string
-       * @default 'Dimitri Glazkov'
+       * @attribute authors
+       * @type array
+       * @default ['Bujar Bakiu','István Koren']
        */
-      author: 'István Koren',
+      authors: ['Bujar Bakiu','István Koren'],
 
       /**
        * `fancy` is a property that does something fancy.
@@ -61,6 +74,7 @@ Element providing solution to no problem in particular.
        * @default false
        */
       fancy: false,
+	  markers:[],
 	  togged: false,
 
       ready: function() {
@@ -68,6 +82,7 @@ Element providing solution to no problem in particular.
         // You can do setup work in here.
         // More info: http://www.polymer-project.org/docs/polymer/polymer.html#lifecyclemethods
         this.playing = false;
+		
       },
 
       /**
@@ -141,6 +156,14 @@ Element providing solution to no problem in particular.
 	  },
 	  progress_amount: function(e, detail, sender) {
 		this.$.slider.secondaryProgress = detail;
+	  },
+	  showMarker: function(e, detail, sender) {
+	  console.log("ShowMarker on video controls called");
+	  console.log(detail);
+		this.markers.push({
+			horizontalOffset:  Math.round(detail)
+        });
+	  console.log(this.markers);
 	  }
 
     });
