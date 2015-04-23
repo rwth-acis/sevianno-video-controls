@@ -10,7 +10,7 @@
 
 :host {
     display: inline-block;
-    width: 200px;
+    width: 240px;
 }
 
 /* To ensure your styling works under the Shadow DOM polyfill, see
