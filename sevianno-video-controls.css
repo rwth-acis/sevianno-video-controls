@@ -41,6 +41,7 @@ polyfill-next-selector {
 
 paper-slider {
     /*display: table-cell;*/
+    width: 100%;
 }
 
 paper-icon-button {
