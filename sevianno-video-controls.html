@@ -26,148 +26,149 @@ Element providing solution to no problem in particular.
 -->
 <polymer-element name="sevianno-video-controls" attributes="notitle author play">
 
-  <template>
+    <template>
 
-    <link rel="stylesheet" href="sevianno-video-controls.css">
+        <link rel="stylesheet" href="sevianno-video-controls.css">
 
-    <!--<paper-icon-button id="playButton" icon="send" on-tap="{{onPlay}}"></paper-icon-button>-->
-	
-	<paper-icon-button id="playButton" icon="send" on-click="{{onPlay}}"></paper-icon-button>
-	<div id="slider-content">
-    <paper-slider id="slider" on-change="{{sliderChange}}" flex></paper-slider>
-	<div id="slider-marker">
-	<template id="slider-markers" repeat="{{marker in markers}}">
-            <div class="verticalLine" style="left:{{marker.horizontalOffset}}px;"></div>
-     </template>
-	<!-- <div class="verticalLine" style="left:16px;"></div>
-	<div class="verticalLine" style="left:32px;"></div>
-	<div class="verticalLine" style="left:50px;"></div>
-	<div class="verticalLine" style="left:100px;"></div>
-	<div class="verticalLine" style="left:180px;"></div> -->
-	</div>
-	</div>
-    <!--<content></content>-->
-	<core-signals on-core-signal-play="{{play}}"></core-signals>
-    <core-signals on-core-signal-pause="{{pause}}"></core-signals>
-    <core-signals on-core-signal-timeupdate="{{timeupdate}}"></core-signals>
-    <core-signals on-core-signal-progress-amount="{{progress_amount}}"></core-signals>
-	<core-signals on-core-signal-show-marker="{{showMarker}}"></core-signals>
-  </template>
+        <div horizontal layout>
 
-  <script>
+            <paper-icon-button id="playButton" icon="send" on-click="{{onPlay}}"></paper-icon-button>
+            <div id="slider-content" horizontal layout center flex>
+                <paper-slider id="slider" on-change="{{sliderChange}}"></paper-slider>
+                <div id="slider-marker">
+                    <template id="slider-markers" repeat="{{marker in markers}}">
+                        <div class="verticalLine" style="left:{{marker.horizontalOffset}}px;"></div>
+                    </template>
+                    <!-- <div class="verticalLine" style="left:16px;"></div>
+                    <div class="verticalLine" style="left:32px;"></div>
+                    <div class="verticalLine" style="left:50px;"></div>
+                    <div class="verticalLine" style="left:100px;"></div>
+                    <div class="verticalLine" style="left:180px;"></div> -->
+                </div>
+            </div>
+        </div>
+        <!--<content></content>-->
+        <core-signals on-core-signal-play="{{play}}"></core-signals>
+        <core-signals on-core-signal-pause="{{pause}}"></core-signals>
+        <core-signals on-core-signal-timeupdate="{{timeupdate}}"></core-signals>
+        <core-signals on-core-signal-progress-amount="{{progress_amount}}"></core-signals>
+        <core-signals on-core-signal-show-marker="{{showMarker}}"></core-signals>
+    </template>
 
-    Polymer({
-      /**
-       * The `authors` attribute sets contributors author
-       *
-       * @attribute authors
-       * @type array
-       * @default ['Bujar Bakiu','István Koren']
-       */
-      authors: ['Bujar Bakiu','István Koren'],
+    <script>
 
-      /**
-       * `fancy` is a property that does something fancy.
-       *
-       * @property fancy
-       * @type bool
-       * @default false
-       */
-      fancy: false,
-	  markers:[],
-	  togged: false,
+        Polymer({
+            /**
+             * The `authors` attribute sets contributors author
+             *
+             * @attribute authors
+             * @type array
+             * @default ['Bujar Bakiu','István Koren']
+             */
+            authors: ['Bujar Bakiu', 'István Koren'],
 
-      ready: function() {
-        // Ready is a lifecycle callback.
-        // You can do setup work in here.
-        // More info: http://www.polymer-project.org/docs/polymer/polymer.html#lifecyclemethods
-        this.playing = false;
-		
-      },
+            /**
+             * `fancy` is a property that does something fancy.
+             *
+             * @property fancy
+             * @type bool
+             * @default false
+             */
+            fancy: false,
+            markers: [],
+            togged: false,
 
-      /**
-       * The `play` method will start playing a video.
-       * 
-       * @method play
-       */
-      onPlay: function() {
-        // use autobinding feature by polymer
-        /*this.$.playButton.icon = this.playing ? "send" : "filter-list";
-        this.playing = !this.playing;
-		this.fire('sevianno-video-controls-onPlay');
-        this.play();*/
-		if(!this.togged) this.fire('core-signal', { name: "play" });
-		else this.fire('core-signal', { name: "pause" });
-      },
+            ready: function () {
+                // Ready is a lifecycle callback.
+                // You can do setup work in here.
+                // More info: http://www.polymer-project.org/docs/polymer/polymer.html#lifecyclemethods
+                this.playing = false;
 
-      /**
-       * The `sayHello` method will return a greeting.
-       *
-       * @method sayHello
-       * @param {String} greeting Pass in a specific greeting.
-       * @return {String} Returns a string greeting.
-       */
-      sayHello: function(greeting) {
-        var response = greeting || 'Hello World!';
-        return 'sevianno-video-controls says, ' + response;
-      },
+            },
 
-      /**
-       * The `sevianno-video-controls-lasers-success` event is fired whenever we
-       * call fireLasers.
-       *
-       * @event sevianno-video-controls-lasers-success
-       * @param {Object} detail
-       *   @param {string} detail.sound An amazing sound.
-       */
+            /**
+             * The `play` method will start playing a video.
+             *
+             * @method play
+             */
+            onPlay: function () {
+                // use autobinding feature by polymer
+                /*this.$.playButton.icon = this.playing ? "send" : "filter-list";
+                 this.playing = !this.playing;
+                 this.fire('sevianno-video-controls-onPlay');
+                 this.play();*/
+                if (!this.togged) this.fire('core-signal', {name: "play"});
+                else this.fire('core-signal', {name: "pause"});
+            },
 
-      /**
-       * The `fireLasers` method will fire the lasers. At least
-       * it will dispatch an event that claims lasers were fired :)
-       *
-       * @method fireLasers
-       */
-      fireLasers: function() {
-        this.fire('sevianno-video-controls-lasers-success', { sound: 'Pew pew pew!' });
-      },
-	  
-	  
-	  playClick: function() {
-		if(!this.togged) this.fire('core-signal', { name: "play" });
-		else this.fire('core-signal', { name: "pause" });
-	  },
-	  sliderChange: function(e, detail, sender) {
-		this.fire('core-signal', { name: 'change', data: sender.immediateValue });
-		//console.log(sender.immediateValue);
-	  },
-	  play: function() {
-		console.log("play");
-		this.togged = true;
-		this.$.playButton.icon = "filter-list";
-	  },
-	  pause: function() {
-		console.log("pause");
-		this.togged = false;
-		this.$.playButton.icon = "send";
-	  },
-	  timeupdate: function(e, detail, sender) {
-		this.$.slider.value = detail;
-		//console.log(detail);
-	  },
-	  progress_amount: function(e, detail, sender) {
-		this.$.slider.secondaryProgress = detail;
-	  },
-	  showMarker: function(e, detail, sender) {
-	  console.log("ShowMarker on video controls called");
-	  console.log(detail);
-		this.markers.push({
-			horizontalOffset:  Math.round(detail)
+            /**
+             * The `sayHello` method will return a greeting.
+             *
+             * @method sayHello
+             * @param {String} greeting Pass in a specific greeting.
+             * @return {String} Returns a string greeting.
+             */
+            sayHello: function (greeting) {
+                var response = greeting || 'Hello World!';
+                return 'sevianno-video-controls says, ' + response;
+            },
+
+            /**
+             * The `sevianno-video-controls-lasers-success` event is fired whenever we
+             * call fireLasers.
+             *
+             * @event sevianno-video-controls-lasers-success
+             * @param {Object} detail
+             *   @param {string} detail.sound An amazing sound.
+             */
+
+            /**
+             * The `fireLasers` method will fire the lasers. At least
+             * it will dispatch an event that claims lasers were fired :)
+             *
+             * @method fireLasers
+             */
+            fireLasers: function () {
+                this.fire('sevianno-video-controls-lasers-success', {sound: 'Pew pew pew!'});
+            },
+
+
+            playClick: function () {
+                if (!this.togged) this.fire('core-signal', {name: "play"});
+                else this.fire('core-signal', {name: "pause"});
+            },
+            sliderChange: function (e, detail, sender) {
+                this.fire('core-signal', {name: 'change', data: sender.immediateValue});
+                //console.log(sender.immediateValue);
+            },
+            play: function () {
+                console.log("play");
+                this.togged = true;
+                this.$.playButton.icon = "filter-list";
+            },
+            pause: function () {
+                console.log("pause");
+                this.togged = false;
+                this.$.playButton.icon = "send";
+            },
+            timeupdate: function (e, detail, sender) {
+                this.$.slider.value = detail;
+                //console.log(detail);
+            },
+            progress_amount: function (e, detail, sender) {
+                this.$.slider.secondaryProgress = detail;
+            },
+            showMarker: function (e, detail, sender) {
+                console.log("ShowMarker on video controls called");
+                console.log(detail);
+                this.markers.push({
+                    horizontalOffset: Math.round(detail)
+                });
+                console.log(this.markers);
+            }
+
         });
-	  console.log(this.markers);
-	  }
 
-    });
-
-  </script>
+    </script>
 
 </polymer-element>
