@@ -9,38 +9,43 @@
  */
 
 :host {
-  display: block;
-  
+    display: inline-block;
+    width: 200px;
 }
 
 /* To ensure your styling works under the Shadow DOM polyfill, see
    www.polymer-project.org/docs/polymer/styling.html#directives */
-polyfill-next-selector { content: ':host > h2'; }
-::content h2 {
-  color: blue;
+polyfill-next-selector {
+    content: ':host > h2';
 }
+
+::content h2 {
+    color: blue;
+}
+
 .verticalLine {
     border-left: thick solid #ff0000;
-	position: absolute;
-	top:0px;
-	height:50px;
-	width:2px;
+    position: absolute;
+    top: 0px;
+    height: 50px;
+    width: 2px;
 }
-#slider-content{
-	position: relative;
-	height: 50px;
-	width: 200px;
-	display: table;
-	overflow: hidden;
-	float:left;
+
+#slider-content {
+    position: relative;
+    height: 50px;
+    width: 200px;
+    display: table;
+    overflow: hidden;
 }
-paper-slider{
-display: table-cell;
-vertical-align: middle;
+
+paper-slider {
+    display: table-cell;
+    vertical-align: middle;
 
 }
-paper-icon-button
-{
-float:left;
+
+paper-icon-button {
+    float: left;
 
 }
