@@ -84,7 +84,6 @@ Element providing solution to no problem in particular.
                 // You can do setup work in here.
                 // More info: http://www.polymer-project.org/docs/polymer/polymer.html#lifecyclemethods
                 this.playing = false;
-
             },
 
             /**
@@ -153,7 +152,7 @@ Element providing solution to no problem in particular.
                 this.$.playButton.icon = "av:play-arrow";
             },
             timeupdate: function (e, detail, sender) {
-                this.$.slider.value = detail;
+		this.$.slider.value = detail.sliderValue;
                 //console.log(detail);
             },
             progress_amount: function (e, detail, sender) {
