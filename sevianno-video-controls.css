@@ -24,12 +24,13 @@ polyfill-next-selector {
 }
 
 .verticalLine {
-    border-left: thick solid #ff0000;
-    position: absolute;
-    top: 0px;
-    height: 40px;
-    width: 2px;
-}
+	background: red;
+	position:absolute;
+    /*top: 0px;*/
+    height: 100%;
+    width: 4px;
+
+	}
 
 #slider-content {
     position: relative;
@@ -42,6 +43,13 @@ polyfill-next-selector {
 paper-slider {
     /*display: table-cell;*/
     width: 100%;
+}
+
+#marker-content{
+	width: 85%;               /* fallback for browsers without support for calc() */
+	width: calc(100% - 32px);
+	height:10px;
+	background: #CCC;
 }
 
 paper-icon-button {
