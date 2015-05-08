@@ -80,10 +80,10 @@ Element providing solution to no problem in particular.
                 // More info: http://www.polymer-project.org/docs/polymer/polymer.html#lifecyclemethods
                 this.playing = false;
 				var i = 0;
-				for (i = 0; i < 6; i++ )
-				this.markers.push({
-                    horizontalOffset: (i*20)
-                });
+				//for (i = 0; i < 6; i++ )
+				//this.markers.push({
+                  //  horizontalOffset: (i*20)
+                //});
             },
 
             /**
@@ -159,9 +159,11 @@ Element providing solution to no problem in particular.
                 this.$.slider.secondaryProgress = detail;
             },
             showMarker: function (e, detail, sender) {
+			console.log("added marker");
                 this.markers.push({
-                    horizontalOffset: Math.round(detail)
+                    horizontalOffset: detail
                 });
+				console.log(this.markers);
             }
 
         });
