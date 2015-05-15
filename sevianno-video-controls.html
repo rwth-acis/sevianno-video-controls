@@ -27,142 +27,118 @@ Element providing solution to no problem in particular.
 -->
 <polymer-element name="sevianno-video-controls" attributes="notitle author play">
 
-    <template>
+	<template>
+		<link rel="stylesheet" href="sevianno-video-controls.css">
 
-        <link rel="stylesheet" href="sevianno-video-controls.css">
+		<div horizontal layout>
+			<paper-icon-button id="playButton" icon="av:play-arrow" on-click="{{onPlay}}"></paper-icon-button>
+			<div id="slider-content" vertical layout center flex>
+				<paper-slider id="slider" on-change="{{sliderChange}}"></paper-slider>
 
-        <div horizontal layout>
-
-            <paper-icon-button id="playButton" icon="av:play-arrow" on-click="{{onPlay}}"></paper-icon-button>
-            <div id="slider-content" vertical layout center flex>
-                <paper-slider id="slider" on-change="{{sliderChange}}"></paper-slider>
-               
 				<div id = "marker-content" horizontal layout flex two>
-                    <template id="slider-markers" repeat="{{marker in markers}}">
-                        <div class="verticalLine" style="left: calc(14px + ({{marker.horizontalOffset}}% - ({{marker.horizontalOffset}}/100*32px)));"></div>
-                    </template>
+					<template id="slider-markers" repeat="{{marker in markers}}">
+						<div class="verticalLine" style="left: calc(14px + ({{marker.horizontalOffset}}% - ({{marker.horizontalOffset}}/100*32px)));"></div>
+					</template>
 				</div>	
-               </div>
-             </div>
-        <core-signals on-core-signal-play="{{play}}"></core-signals>
-        <core-signals on-core-signal-pause="{{pause}}"></core-signals>
-        <core-signals on-core-signal-timeupdate="{{timeupdate}}"></core-signals>
-        <core-signals on-core-signal-progress-amount="{{progress_amount}}"></core-signals>
-        <core-signals on-core-signal-show-marker="{{showMarker}}"></core-signals>
-    </template>
-
+			</div>
+		</div>
+		<core-signals on-core-signal-play="{{play}}"></core-signals>
+		<core-signals on-core-signal-pause="{{pause}}"></core-signals>
+		<core-signals on-core-signal-timeupdate="{{timeupdate}}"></core-signals>
+		<core-signals on-core-signal-progress-amount="{{progress_amount}}"></core-signals>
+		<core-signals on-core-signal-show-marker="{{showMarker}}"></core-signals>
+	</template>
     <script>
+	Polymer({
+		/**
+		 * The `authors` attribute sets contributors author
+		 *
+		 * @attribute authors
+		 * @type array
+		 * @default ['Bujar Bakiu','István Koren']
+		 */
+		authors: ['Bujar Bakiu', 'István Koren'],
 
-        Polymer({
-            /**
-             * The `authors` attribute sets contributors author
-             *
-             * @attribute authors
-             * @type array
-             * @default ['Bujar Bakiu','István Koren']
-             */
-            authors: ['Bujar Bakiu', 'István Koren'],
+		/**
+		 * `fancy` is a property that does something fancy.
+		 *
+		 * @property fancy
+		 * @type bool
+		 * @default false
+		 */
+		fancy: false,
+		markers: [],
+		togged: false,
+		ready: function () {
+			this.playing = false;
+		},
 
-            /**
-             * `fancy` is a property that does something fancy.
-             *
-             * @property fancy
-             * @type bool
-             * @default false
-             */
-            fancy: false,
-            markers: [],
-            togged: false,
+		/**
+		 * The `play` method will start playing a video.
+		 *
+		 * @method play
+		 */
+		onPlay: function () {
+			if (!this.togged) this.fire('core-signal', {name: "play"});
+			else this.fire('core-signal', {name: "pause"});
+		},
 
-            ready: function () {
-                // Ready is a lifecycle callback.
-                // You can do setup work in here.
-                // More info: http://www.polymer-project.org/docs/polymer/polymer.html#lifecyclemethods
-                this.playing = false;
-				var i = 0;
-				//for (i = 0; i < 6; i++ )
-				//this.markers.push({
-                  //  horizontalOffset: (i*20)
-                //});
-            },
+		/**
+		 * The `sayHello` method will return a greeting.
+		 *
+		 * @method sayHello
+		 * @param {String} greeting Pass in a specific greeting.
+		 * @return {String} Returns a string greeting.
+		 */
+		sayHello: function (greeting) {
+			var response = greeting || 'Hello World!';
+			return 'sevianno-video-controls says, ' + response;
+		},
 
-            /**
-             * The `play` method will start playing a video.
-             *
-             * @method play
-             */
-            onPlay: function () {
-                // use autobinding feature by polymer
-                /*this.$.playButton.icon = this.playing ? "send" : "filter-list";
-                 this.playing = !this.playing;
-                 this.fire('sevianno-video-controls-onPlay');
-                 this.play();*/
-                if (!this.togged) this.fire('core-signal', {name: "play"});
-                else this.fire('core-signal', {name: "pause"});
-            },
+		/**
+		 * The `sevianno-video-controls-lasers-success` event is fired whenever we
+		 * call fireLasers.
+		 *
+		 * @event sevianno-video-controls-lasers-success
+		 * @param {Object} detail
+		 *   @param {string} detail.sound An amazing sound.
+		 */
 
-            /**
-             * The `sayHello` method will return a greeting.
-             *
-             * @method sayHello
-             * @param {String} greeting Pass in a specific greeting.
-             * @return {String} Returns a string greeting.
-             */
-            sayHello: function (greeting) {
-                var response = greeting || 'Hello World!';
-                return 'sevianno-video-controls says, ' + response;
-            },
-
-            /**
-             * The `sevianno-video-controls-lasers-success` event is fired whenever we
-             * call fireLasers.
-             *
-             * @event sevianno-video-controls-lasers-success
-             * @param {Object} detail
-             *   @param {string} detail.sound An amazing sound.
-             */
-
-            /**
-             * The `fireLasers` method will fire the lasers. At least
-             * it will dispatch an event that claims lasers were fired :)
-             *
-             * @method fireLasers
-             */
-            fireLasers: function () {
-                this.fire('sevianno-video-controls-lasers-success', {sound: 'Pew pew pew!'});
-            },
-
-
-            playClick: function () {
-                if (!this.togged) this.fire('core-signal', {name: "play"});
-                else this.fire('core-signal', {name: "pause"});
-            },
-            sliderChange: function (e, detail, sender) {
-                this.fire('core-signal', {name: 'change', data: sender.immediateValue});
-            },
-            play: function () {
-                this.togged = true;
-                this.$.playButton.icon = "av:pause";
-            },
-            pause: function () {
-                this.togged = false;
-                this.$.playButton.icon = "av:play-arrow";
-            },
-            timeupdate: function (e, detail, sender) {
-				this.$.slider.value = detail.sliderValue;
-            },
-            progress_amount: function (e, detail, sender) {
-                this.$.slider.secondaryProgress = detail;
-            },
-            showMarker: function (e, detail, sender) {
-			console.log("added marker");
-                this.markers.push({
-                    horizontalOffset: detail
-                });
-            }
-
-        });
-
-    </script>
-
+		/**
+		 * The `fireLasers` method will fire the lasers. At least
+		 * it will dispatch an event that claims lasers were fired :)
+		 *
+		 * @method fireLasers
+		 */
+		fireLasers: function () {
+			this.fire('sevianno-video-controls-lasers-success', {sound: 'Pew pew pew!'});
+		},
+		playClick: function () {
+			if (!this.togged) this.fire('core-signal', {name: "play"});
+			else this.fire('core-signal', {name: "pause"});
+		},
+		sliderChange: function (e, detail, sender) {
+			this.fire('core-signal', {name: 'change', data: sender.immediateValue});
+		},
+		play: function () {
+			this.togged = true;
+			this.$.playButton.icon = "av:pause";
+		},
+		pause: function () {
+			this.togged = false;
+			this.$.playButton.icon = "av:play-arrow";
+		},
+		timeupdate: function (e, detail, sender) {
+			this.$.slider.value = detail.sliderValue;
+		},
+		progress_amount: function (e, detail, sender) {
+			this.$.slider.secondaryProgress = detail;
+		},
+		showMarker: function (e, detail, sender) {
+			this.markers.push({
+				horizontalOffset: detail
+			});
+		}
+	});
+</script>
 </polymer-element>
