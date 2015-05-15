@@ -139,21 +139,17 @@ Element providing solution to no problem in particular.
             },
             sliderChange: function (e, detail, sender) {
                 this.fire('core-signal', {name: 'change', data: sender.immediateValue});
-                //console.log(sender.immediateValue);
             },
             play: function () {
-                console.log("play");
                 this.togged = true;
                 this.$.playButton.icon = "av:pause";
             },
             pause: function () {
-                console.log("pause");
                 this.togged = false;
                 this.$.playButton.icon = "av:play-arrow";
             },
             timeupdate: function (e, detail, sender) {
-		this.$.slider.value = detail.sliderValue;
-                //console.log(detail);
+				this.$.slider.value = detail.sliderValue;
             },
             progress_amount: function (e, detail, sender) {
                 this.$.slider.secondaryProgress = detail;
@@ -163,7 +159,6 @@ Element providing solution to no problem in particular.
                 this.markers.push({
                     horizontalOffset: detail
                 });
-				console.log(this.markers);
             }
 
         });
