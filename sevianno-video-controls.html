@@ -37,7 +37,7 @@ Element providing solution to no problem in particular.
 
 				<div id = "marker-content" horizontal layout flex two>
 					<template id="slider-markers" repeat="{{marker in markers}}">
-						<div class="verticalLine" style="left: calc(14px + ({{marker.horizontalOffset}}% - ({{marker.horizontalOffset}}/100*32px)));"></div>
+						<div class="verticalLine" data-immediate-value="{{marker.horizontalOffset}}" on-tap="{{markerClicked}}"  style="left: calc(14px + ({{marker.horizontalOffset}}% - ({{marker.horizontalOffset}}/100*32px)));"></div>
 					</template>
 				</div>	
 			</div>
@@ -119,6 +119,10 @@ Element providing solution to no problem in particular.
 		},
 		sliderChange: function (e, detail, sender) {
 			this.fire('core-signal', {name: 'change', data: sender.immediateValue});
+		},
+		markerClicked: function (event, detail, sender) {
+			console.log(sender.dataset.immediateValue);// div
+			this.fire('core-signal', {name: 'change', data: sender.dataset.immediateValue});
 		},
 		play: function () {
 			this.togged = true;
