@@ -121,7 +121,6 @@ Element providing solution to no problem in particular.
 			this.fire('core-signal', {name: 'change', data: sender.immediateValue});
 		},
 		markerClicked: function (event, detail, sender) {
-			console.log(sender.dataset.immediateValue);// div
 			this.fire('core-signal', {name: 'change', data: sender.dataset.immediateValue});
 		},
 		play: function () {
