@@ -1,11 +1,32 @@
 <!--
-    @license
-    Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
-    This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-    The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-    The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-    Code distributed by Google as part of the polymer project is also
-    subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+Copyright (c) 2014 Advanced Community Information Systems (ACIS) Group, 
+Chair of Computer Science 5 (Databases & Information Systems), RWTH Aachen University, Germany
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of the ACIS Group nor the names of its
+  contributors may be used to endorse or promote products derived from
+  this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../paper-icon-button/paper-icon-button.html">
@@ -60,21 +81,30 @@ Element providing solution to no problem in particular.
 		authors: ['Bujar Bakiu', 'István Koren'],
 
 		/**
-		 * `fancy` is a property that does something fancy.
+		 * The `markers` array, has all the positions where there is an annotation.
+		 * It is binded to the  template with id `slider-markers`. Anytime an item is added to the array, it is shown
+		 * also at the markers.
 		 *
-		 * @property fancy
-		 * @type bool
-		 * @default false
-		 */
-		fancy: false,
+		 * @attribute markers
+		 * @type array
+		 * @default []
+		 * */
 		markers: [],
+
+		/**
+		 * tooged is used to change the icon of play button, from play to pause and the other way around.
+		 *
+		 * @attribute tooged
+		 * @type boolean
+		 * @default false
+		 * */
 		togged: false,
 		ready: function () {
 			this.playing = false;
 		},
 
 		/**
-		 * The `play` method will start playing a video.
+		 * The `onPlay` method will start playing a video.
 		 *
 		 * @method play
 		 */
@@ -84,45 +114,38 @@ Element providing solution to no problem in particular.
 		},
 
 		/**
-		 * The `sayHello` method will return a greeting.
-		 *
-		 * @method sayHello
-		 * @param {String} greeting Pass in a specific greeting.
-		 * @return {String} Returns a string greeting.
+		 * The `playClick` method takes care when the user clicks the play button.
 		 */
-		sayHello: function (greeting) {
-			var response = greeting || 'Hello World!';
-			return 'sevianno-video-controls says, ' + response;
-		},
-
-		/**
-		 * The `sevianno-video-controls-lasers-success` event is fired whenever we
-		 * call fireLasers.
-		 *
-		 * @event sevianno-video-controls-lasers-success
-		 * @param {Object} detail
-		 *   @param {string} detail.sound An amazing sound.
-		 */
-
-		/**
-		 * The `fireLasers` method will fire the lasers. At least
-		 * it will dispatch an event that claims lasers were fired :)
-		 *
-		 * @method fireLasers
-		 */
-		fireLasers: function () {
-			this.fire('sevianno-video-controls-lasers-success', {sound: 'Pew pew pew!'});
-		},
 		playClick: function () {
 			if (!this.togged) this.fire('core-signal', {name: "play"});
 			else this.fire('core-signal', {name: "pause"});
 		},
+
+		/**
+		 * The `sliderChange` method is binded to the action of changing the value of video slider.
+		 * When the user jumps at some random point of the slider, an signal is fired to jump the video at that position.
+		 * @param e is the event, in this case the click event
+		 * @param detail is usually an integer number
+		 * @param sender is the element which fired the action with its data.
+		 */
 		sliderChange: function (e, detail, sender) {
 			this.fire('core-signal', {name: 'change', data: sender.immediateValue});
 		},
+
+		/**
+		 * The `markerClicked` method is called when a marker is clicked. It will jump the video and the marker time and
+		 * show the annotation for this marker.
+		 * @param event
+		 * @param detail
+		 * @param sender the value is binded at the immediateValue data of the element.
+		 */
 		markerClicked: function (event, detail, sender) {
 			this.fire('core-signal', {name: 'change', data: sender.dataset.immediateValue});
 		},
+
+		/**
+		 * Changes the icon of play button
+		 */
 		play: function () {
 			this.togged = true;
 			this.$.playButton.icon = "av:pause";
@@ -131,12 +154,27 @@ Element providing solution to no problem in particular.
 			this.togged = false;
 			this.$.playButton.icon = "av:play-arrow";
 		},
+
+		/**
+		 * For every timeupdate event updates the value of the slider.
+		 * @param e
+		 * @param detail
+		 * @param sender
+		 */
 		timeupdate: function (e, detail, sender) {
 			this.$.slider.value = detail.sliderValue;
 		},
 		progress_amount: function (e, detail, sender) {
 			this.$.slider.secondaryProgress = detail;
 		},
+
+		/**
+		 * When a new annotation is added, its value is added to the markers array and it is show at the marker-content div.
+		 *
+		 * @param e
+		 * @param detail
+		 * @param sender
+		 */
 		showMarker: function (e, detail, sender) {
 			this.markers.push({
 				horizontalOffset: detail
