@@ -1,15 +1,38 @@
 <!--
-    @license
-    Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
-    This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-    The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-    The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-    Code distributed by Google as part of the polymer project is also
-    subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+Copyright (c) 2014 Advanced Community Information Systems (ACIS) Group, 
+Chair of Computer Science 5 (Databases & Information Systems), RWTH Aachen University, Germany
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of the ACIS Group nor the names of its
+  contributors may be used to endorse or promote products derived from
+  this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../paper-slider/paper-slider.html">
+<link rel="import" href="../core-signals/core-signals.html">
+<link rel="import" href="../core-icons/av-icons.html">
 
 <!--
 Element providing solution to no problem in particular.
@@ -25,89 +48,138 @@ Element providing solution to no problem in particular.
 -->
 <polymer-element name="sevianno-video-controls" attributes="notitle author play">
 
-  <template>
+	<template>
+		<link rel="stylesheet" href="sevianno-video-controls.css">
 
-    <link rel="stylesheet" href="sevianno-video-controls.css">
+		<div horizontal layout>
+			<paper-icon-button id="playButton" icon="av:play-arrow" on-click="{{onPlay}}"></paper-icon-button>
+			<div id="slider-content" vertical layout center flex>
+				<paper-slider id="slider" on-change="{{sliderChange}}"></paper-slider>
 
-    <paper-icon-button id="playButton" icon="send" on-tap="{{onPlay}}"></paper-icon-button>
-    <paper-slider></paper-slider>
-    <!--<content></content>-->
+				<div id = "marker-content" horizontal layout flex two>
+					<template id="slider-markers" repeat="{{marker in markers}}">
+						<div class="verticalLine" data-immediate-value="{{marker.horizontalOffset}}" on-tap="{{markerClicked}}"  style="left: calc(14px + ({{marker.horizontalOffset}}% - ({{marker.horizontalOffset}}/100*32px)));"></div>
+					</template>
+				</div>	
+			</div>
+		</div>
+		<core-signals on-core-signal-play="{{play}}"></core-signals>
+		<core-signals on-core-signal-pause="{{pause}}"></core-signals>
+		<core-signals on-core-signal-timeupdate="{{timeupdate}}"></core-signals>
+		<core-signals on-core-signal-progress-amount="{{progress_amount}}"></core-signals>
+		<core-signals on-core-signal-show-marker="{{showMarker}}"></core-signals>
+	</template>
+    <script>
+	Polymer({
+		/**
+		 * The `authors` attribute sets contributors author
+		 *
+		 * @attribute authors
+		 * @type array
+		 * @default ['Bujar Bakiu','István Koren']
+		 */
+		authors: ['Bujar Bakiu', 'István Koren'],
 
-  </template>
+		/**
+		 * The `markers` array, has all the positions where there is an annotation.
+		 * It is binded to the  template with id `slider-markers`. Anytime an item is added to the array, it is shown
+		 * also at the markers.
+		 *
+		 * @attribute markers
+		 * @type array
+		 * @default []
+		 * */
+		markers: [],
 
-  <script>
+		/**
+		 * tooged is used to change the icon of play button, from play to pause and the other way around.
+		 *
+		 * @attribute tooged
+		 * @type boolean
+		 * @default false
+		 * */
+		togged: false,
+		ready: function () {
+			this.playing = false;
+		},
 
-    Polymer({
-      /**
-       * The `author` attribute sets an initial author
-       *
-       * @attribute author
-       * @type string
-       * @default 'Dimitri Glazkov'
-       */
-      author: 'István Koren',
+		/**
+		 * The `onPlay` method will start playing a video.
+		 *
+		 * @method play
+		 */
+		onPlay: function () {
+			if (!this.togged) this.fire('core-signal', {name: "play"});
+			else this.fire('core-signal', {name: "pause"});
+		},
 
-      /**
-       * `fancy` is a property that does something fancy.
-       *
-       * @property fancy
-       * @type bool
-       * @default false
-       */
-      fancy: false,
+		/**
+		 * The `playClick` method takes care when the user clicks the play button.
+		 */
+		playClick: function () {
+			if (!this.togged) this.fire('core-signal', {name: "play"});
+			else this.fire('core-signal', {name: "pause"});
+		},
 
-      ready: function() {
-        // Ready is a lifecycle callback.
-        // You can do setup work in here.
-        // More info: http://www.polymer-project.org/docs/polymer/polymer.html#lifecyclemethods
-        this.playing = false;
-      },
+		/**
+		 * The `sliderChange` method is binded to the action of changing the value of video slider.
+		 * When the user jumps at some random point of the slider, an signal is fired to jump the video at that position.
+		 * @param e is the event, in this case the click event
+		 * @param detail is usually an integer number
+		 * @param sender is the element which fired the action with its data.
+		 */
+		sliderChange: function (e, detail, sender) {
+			this.fire('core-signal', {name: 'change', data: sender.immediateValue});
+		},
 
-      /**
-       * The `play` method will start playing a video.
-       * 
-       * @method play
-       */
-      onPlay: function() {
-        // use autobinding feature by polymer
-        this.$.playButton.icon = this.playing ? "send" : "filter-list";
-        this.playing = !this.playing;
-        this.play();
-      },
+		/**
+		 * The `markerClicked` method is called when a marker is clicked. It will jump the video and the marker time and
+		 * show the annotation for this marker.
+		 * @param event
+		 * @param detail
+		 * @param sender the value is binded at the immediateValue data of the element.
+		 */
+		markerClicked: function (event, detail, sender) {
+			this.fire('core-signal', {name: 'change', data: sender.dataset.immediateValue});
+		},
 
-      /**
-       * The `sayHello` method will return a greeting.
-       *
-       * @method sayHello
-       * @param {String} greeting Pass in a specific greeting.
-       * @return {String} Returns a string greeting.
-       */
-      sayHello: function(greeting) {
-        var response = greeting || 'Hello World!';
-        return 'sevianno-video-controls says, ' + response;
-      },
+		/**
+		 * Changes the icon of play button
+		 */
+		play: function () {
+			this.togged = true;
+			this.$.playButton.icon = "av:pause";
+		},
+		pause: function () {
+			this.togged = false;
+			this.$.playButton.icon = "av:play-arrow";
+		},
 
-      /**
-       * The `sevianno-video-controls-lasers-success` event is fired whenever we
-       * call fireLasers.
-       *
-       * @event sevianno-video-controls-lasers-success
-       * @param {Object} detail
-       *   @param {string} detail.sound An amazing sound.
-       */
+		/**
+		 * For every timeupdate event updates the value of the slider.
+		 * @param e
+		 * @param detail
+		 * @param sender
+		 */
+		timeupdate: function (e, detail, sender) {
+			this.$.slider.value = detail.sliderValue;
+		},
+		progress_amount: function (e, detail, sender) {
+			this.$.slider.secondaryProgress = detail;
+		},
 
-      /**
-       * The `fireLasers` method will fire the lasers. At least
-       * it will dispatch an event that claims lasers were fired :)
-       *
-       * @method fireLasers
-       */
-      fireLasers: function() {
-        this.fire('sevianno-video-controls-lasers-success', { sound: 'Pew pew pew!' });
-      }
-
-    });
-
-  </script>
-
+		/**
+		 * When a new annotation is added, its value is added to the markers array and it is show at the marker-content div.
+		 *
+		 * @param e
+		 * @param detail
+		 * @param sender
+		 */
+		showMarker: function (e, detail, sender) {
+			this.markers.push({
+				horizontalOffset: detail
+			});
+		}
+	});
+</script>
 </polymer-element>
