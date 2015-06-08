@@ -1,10 +1,11 @@
 {
   "name": "sevianno-video-controls",
-  "version": "0.0.0",
+  "version": "0.5.0",
   "authors": [
-    "Anonymous <anonymous@example.com>"
+    "Bujar Bakiu",
+    "István Koren"
   ],
-  "description": "Element providing solution to no problem in particular.",
+  "description": "This is a Web component for controlling a video element.",
   "keywords": [
     "web-component",
     "web-components",
@@ -12,8 +13,8 @@
     "seed"
   ],
   "main": "sevianno-video-controls.html",
-  "license": "MIT",
-  "homepage": "https://github.com/<USERNAME>/sevianno-video-controls/",
+  "license": "Apache2",
+  "homepage": "https://github.com/rwth-acis/sevianno-video-controls/",
   "ignore": [
     "/.*",
     "/tests/"
