@@ -33,9 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <link rel="import" href="../paper-slider/paper-slider.html">
 <link rel="import" href="../iron-icons/av-icons.html">
 <link rel="import" href="../iron-signals/iron-signals.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 
 <!--
-This is a Web component for controlling a video element.
+This is a Web component for controlling a SeViAnno video element. It displays a play/pause button together
+with a video timeline. Below the timeline, there is an annotation bar that marks all occurrences of annotations
+in the video.
 
 Example:
 
@@ -48,11 +51,36 @@ Example:
     <style>
         :host {
             display: inline-block;
-            width: 240px;
+            width: 400px;
+            @apply(--layout-horizontal --layout-flex);
         }
 
+        /*
         ::content h2 {
             color: blue;
+        }
+        */
+
+        #timelines {
+            /*height: 50px;
+            width: 200px;
+            display: table;*/
+            overflow: hidden;
+            @apply(--layout-vertical --layout-flex);
+        }
+
+        paper-slider {
+            /*display: table-cell;
+            @apply(--layout-flex-auto);*/
+            width:100%;
+        }
+
+        #markers {
+            /*width: 85%;               fallback for browsers without support for calc()
+            width: calc(100% - 32px);*/
+            height: 10px;
+            background: #CCC;
+            margin: 0px 14px 0px 14px;
         }
 
         .verticalLine {
@@ -65,26 +93,6 @@ Example:
 
         }
 
-        #slider-content {
-            position: relative;
-            /*height: 50px;
-            width: 200px;
-            display: table;*/
-            overflow: hidden;
-        }
-
-        paper-slider {
-            /*display: table-cell;*/
-            width: 100%;
-        }
-
-        #marker-content{
-            width: 85%;               /* fallback for browsers without support for calc() */
-            width: calc(100% - 32px);
-            height:10px;
-            background: #CCC;
-        }
-
         paper-icon-button {
             float: left;
 
@@ -92,14 +100,14 @@ Example:
     </style>
 
     <template>
-        <div horizontal layout>
-            <paper-icon-button id="playButton" icon="av:play-arrow" on-tap="{{onPlay}}"></paper-icon-button>
-            <div id="slider-content" vertical layout center flex>
-                <paper-slider id="slider" on-change="{{sliderChange}}"></paper-slider>
+        <div>
+            <paper-icon-button id="playButton" icon="av:play-arrow" on-tap="playAction"></paper-icon-button>
+            <div id="timelines">
+                <paper-slider id="slider" on-change="sliderChange"></paper-slider>
 
-                <div id = "marker-content" horizontal layout flex two>
+                <div id = "markers">
                     <template id="slider-markers" repeat="{{marker in markers}}">
-                        <div class="verticalLine" data-immediate-value="{{marker.horizontalOffset}}" on-tap="{{markerClicked}}"  style="left: calc(14px + ({{marker.horizontalOffset}}% - ({{marker.horizontalOffset}}/100*32px)));"></div>
+                        <div class="verticalLine" on-tap="markerClicked"></div>
                     </template>
                 </div>
             </div>
@@ -135,7 +143,21 @@ Example:
             isPlaying: {
                 type: Boolean,
                 value: false
-            }
+            },
+
+            /**
+             * The id of the video element that should be controlled.
+             *
+             * @attribute target
+             * @type string
+             * @default null
+             */
+            target: {
+                type: String,
+                value: null
+            },
+
+            //_targetElement:
 
         },
 
@@ -149,6 +171,9 @@ Example:
 
             // because of shady DOM we have to assign the canvas a random ID otherwise fabric.js
             // finds only the first occurrence
+
+            this._targetElement = document.getElementById(this.target);
+            this._targetElement.ontimeupdate = this.timeupdate.bind(this);
         },
 
         attached: function() {
@@ -177,23 +202,25 @@ Example:
          * @detail {{sound: String}}
          */
 
-        /**
-         * Gets the JSON representation of the drawing.
-         *
-         * @return {object} A JSON stringified object of the drawing.
-         */
-        toJSON: function() {
-            return "{}";
+
+        playAction: function() {
+            if (!this.isPlaying) {
+                this.play();
+            } else {
+                this.pause();
+            }
         },
 
         play: function () {
             this.isPlaying = true;
             this.$.playButton.icon = "av:pause";
+            this._targetElement.play();
         },
 
         pause: function () {
-            this.togged = false;
+            this.isPlaying = false;
             this.$.playButton.icon = "av:play-arrow";
+            this._targetElement.pause();
         },
 
         /**
@@ -206,7 +233,8 @@ Example:
          * @param sender is the element which fired the action with its data.
          */
         sliderChange: function (e, detail, sender) {
-            this.fire('iron-signal', {name: 'change', data: sender.immediateValue});
+            this._targetElement.currentTime = this.$.slider.immediateValue;
+            //this.fire('iron-signal', {name: 'change', data: sender.immediateValue});
         },
 
         /**
@@ -239,9 +267,12 @@ Example:
          * @param detail
          * @param sender
          */
-        timeupdate: function (e, detail, sender) {
-            this.$.slider.value = detail.sliderValue;
+        timeupdate: function (e) {
+            this.$.slider.max = this._targetElement.duration;
+            this.$.slider.value = this._targetElement.currentTime;
+            console.log("video playing");
         },
+
         progress_amount: function (e, detail, sender) {
             this.$.slider.secondaryProgress = detail;
         },

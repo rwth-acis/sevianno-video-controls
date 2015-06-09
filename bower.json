@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "authors": [
     "Bujar Bakiu",
-    "István Koren"
+    "Istvï¿½n Koren"
   ],
   "description": "This is a Web component for controlling a video element.",
   "keywords": [
@@ -23,8 +23,9 @@
   "dependencies": {
     "polymer": "Polymer/polymer#^1.0.0",
     "paper-icon-button": "PolymerElements/paper-icon-button#^1.0.0",
-    "paper-slide": "PolymerElements/paper-slider#^1.0.0",
-    "iron-signals": "PolymerElements/iron-signals#^1.0.0"
+    "paper-slider": "PolymerElements/paper-slider#^1.0.0",
+    "iron-signals": "PolymerElements/iron-signals#^1.0.0",
+    "iron-flex-layout": "PolymerElements/iron-flex-layout#^1.0.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
