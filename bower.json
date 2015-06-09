@@ -1,6 +1,6 @@
 {
   "name": "sevianno-video-controls",
-  "version": "0.5.0",
+  "version": "1.0.0",
   "authors": [
     "Bujar Bakiu",
     "István Koren"
@@ -13,18 +13,21 @@
     "seed"
   ],
   "main": "sevianno-video-controls.html",
-  "license": "Apache2",
+  "license": "Apache-2",
   "homepage": "https://github.com/rwth-acis/sevianno-video-controls/",
   "ignore": [
     "/.*",
-    "/tests/"
+    "/test/",
+    "/demo/"
   ],
   "dependencies": {
-    "polymer": "Polymer/polymer#^0.5.4",
-    "paper-icon-button": "Polymer/paper-icon-button#~0.5.5",
-    "paper-slider": "Polymer/paper-slider#~0.5.5"
+    "polymer": "Polymer/polymer#^1.0.0",
+    "paper-icon-button": "PolymerElements/paper-icon-button#^1.0.0",
+    "paper-slide": "PolymerElements/paper-slider#^1.0.0",
+    "iron-signals": "PolymerElements/iron-signals#^1.0.0"
   },
   "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
     "web-component-tester": "*"
   }
 }
