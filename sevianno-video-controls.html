@@ -81,16 +81,16 @@ Example:
             height: 10px;
             background: #CCC;
             margin: 0px 14px 0px 14px;
+            position: relative;
         }
 
         .verticalLine {
+            position: absolute;
             background: red;
-            position:absolute;
-            /*top: 0px;*/
+            top: 0px;
             height: 100%;
             width: 4px;
             cursor: pointer;
-
         }
 
         paper-icon-button {
@@ -106,8 +106,8 @@ Example:
                 <paper-slider id="slider" on-change="sliderChange"></paper-slider>
 
                 <div id = "markers">
-                    <template id="slider-markers" repeat="{{marker in markers}}">
-                        <div class="verticalLine" on-tap="markerClicked"></div>
+                    <template is="dom-repeat" items="{{markers}}" as="marker">
+                        <div class="verticalLine" on-tap="markerClicked" style$="{{_getMarkerStyle(marker)}}" data-index$="{{index}}"></div>
                     </template>
                 </div>
             </div>
@@ -157,6 +157,13 @@ Example:
                 value: null
             },
 
+            duration: {
+                type: Number,
+                readOnly: true,
+                value: 1
+            }
+
+
             //_targetElement:
 
         },
@@ -173,6 +180,7 @@ Example:
             // finds only the first occurrence
 
             this._targetElement = document.getElementById(this.target);
+            this._targetElement.onloadedmetadata = this.loadedmetadata.bind(this);
             this._targetElement.ontimeupdate = this.timeupdate.bind(this);
         },
 
@@ -202,6 +210,15 @@ Example:
          * @detail {{sound: String}}
          */
 
+        _getMarkerStyle: function(marker) {
+            var position = (marker.time / this.duration) * 99;
+            return "left: " + position + "%;";
+
+            // alternative calculation based on pixels
+            //var width = this.$.slider.clientWidth;
+            // 2 is the width of the marker
+            //var position = ((width / duration) * marker.time) - 2;
+        },
 
         playAction: function() {
             if (!this.isPlaying) {
@@ -258,7 +275,29 @@ Example:
          * @param sender the value is binded at the immediateValue data of the element.
          */
         markerClicked: function (event, detail, sender) {
-            this.fire('iron-signal', {name: 'change', data: sender.dataset.immediateValue});
+            var time = this.markers[event.target.dataset.index].time;
+            this.$.slider.value = time;
+
+            // update the video
+            this._targetElement.currentTime = time;
+
+            //this.fire('iron-signal', {name: 'change', data: sender.dataset.immediateValue});
+        },
+
+        loadedmetadata: function(e) {
+            this._setDuration(e.target.duration);
+            this.$.slider.max = this.duration;
+
+            //this.push('markers', {time: 12.3});
+
+            // we add some demo data...
+            this.markers = [
+                { time: 0},
+                { time: 3.3},
+                { time: 16.3},
+                { time: 29.4},
+                { time: 38}
+            ];
         },
 
         /**
@@ -267,10 +306,8 @@ Example:
          * @param detail
          * @param sender
          */
-        timeupdate: function (e) {
-            this.$.slider.max = this._targetElement.duration;
+        timeupdate: function(e) {
             this.$.slider.value = this._targetElement.currentTime;
-            console.log("video playing");
         },
 
         progress_amount: function (e, detail, sender) {
