@@ -175,14 +175,6 @@ Example:
 
             this._annotations = [];
 
-            this._targetVideoElement = document.getElementById(this.targetVideo);
-            // call loadedmetadata in case the metadata is already loaded
-            this.loadedmetadata();
-            this._targetVideoElement.onloadedmetadata = this.loadedmetadata.bind(this);
-            this._targetVideoElement.ontimeupdate = this.timeupdate.bind(this);
-
-            this._targetDrawingElement = document.getElementById(this.targetDrawing);
-            this._targetDrawingElement.addEventListener("drawing-overlay-object-added", this.drawingObjectAdded.bind(this));
         },
 
         attached: function() {
@@ -192,6 +184,15 @@ Example:
             // This is a good place to perform any work related to your element's
             // visual state or active behavior (measuring sizes, beginning animations,
             // loading resources, etc).
+
+            this._targetVideoElement = document.getElementById(this.targetVideo);
+            // call loadedmetadata in case the metadata is already loaded
+            this.loadedmetadata();
+            this._targetVideoElement.onloadedmetadata = this.loadedmetadata.bind(this);
+            this._targetVideoElement.ontimeupdate = this.timeupdate.bind(this);
+
+            this._targetDrawingElement = document.getElementById(this.targetDrawing);
+            this._targetDrawingElement.addEventListener("drawing-overlay-object-added", this.drawingObjectAdded.bind(this));
         },
 
         detached: function() {
