@@ -106,18 +106,12 @@ Example:
                 <paper-slider id="slider" on-change="sliderChange"></paper-slider>
 
                 <div id = "markers">
-                    <template is="dom-repeat" items="{{markers}}" as="marker">
-                        <div class="verticalLine" on-tap="markerClicked" style$="{{_getMarkerStyle(marker)}}" data-index$="{{index}}"></div>
+                    <template is="dom-repeat" items="{{_annotations}}" as="marker">
+                        <div class="verticalLine" on-tap="markerClicked" title$="{{marker.time}}" style$="{{_getMarkerStyle(marker)}}" data-index$="{{index}}"></div>
                     </template>
                 </div>
             </div>
         </div>
-
-        <iron-signals on-iron-signal-play="{{play}}"></iron-signals>
-        <iron-signals on-iron-signal-pause="{{pause}}"></iron-signals>
-        <iron-signals on-iron-signal-timeupdate="{{timeupdate}}"></iron-signals>
-        <iron-signals on-iron-signal-progress-amount="{{progress_amount}}"></iron-signals>
-        <iron-signals on-iron-signal-show-marker="{{showMarker}}"></iron-signals>
     </template>
 </dom-module>
 
@@ -130,15 +124,13 @@ Example:
         properties: {
 
             /**
-             * The `markers` array, has all the positions where there is an annotation.
-             * It is binded to the  template with id `slider-markers`. Anytime an item is added to the array, it is shown
-             * also at the markers.
+             * The `_annotations` array, has all the annotations.
              *
-             * @attribute markers
+             * @attribute _annotations
              * @type array
              * @default []
              * */
-            markers: [],
+            _annotations: [],
 
             isPlaying: {
                 type: Boolean,
@@ -152,7 +144,12 @@ Example:
              * @type string
              * @default null
              */
-            target: {
+            targetVideo: {
+                type: String,
+                value: null
+            },
+
+            targetDrawing: {
                 type: String,
                 value: null
             },
@@ -162,9 +159,6 @@ Example:
                 readOnly: true,
                 value: 1
             }
-
-
-            //_targetElement:
 
         },
 
@@ -179,9 +173,16 @@ Example:
             // because of shady DOM we have to assign the canvas a random ID otherwise fabric.js
             // finds only the first occurrence
 
-            this._targetElement = document.getElementById(this.target);
-            this._targetElement.onloadedmetadata = this.loadedmetadata.bind(this);
-            this._targetElement.ontimeupdate = this.timeupdate.bind(this);
+            this._annotations = [];
+
+            this._targetVideoElement = document.getElementById(this.targetVideo);
+            // call loadedmetadata in case the metadata is already loaded
+            this.loadedmetadata();
+            this._targetVideoElement.onloadedmetadata = this.loadedmetadata.bind(this);
+            this._targetVideoElement.ontimeupdate = this.timeupdate.bind(this);
+
+            this._targetDrawingElement = document.getElementById(this.targetDrawing);
+            this._targetDrawingElement.addEventListener("drawing-overlay-object-added", this.drawingObjectAdded.bind(this));
         },
 
         attached: function() {
@@ -231,13 +232,14 @@ Example:
         play: function () {
             this.isPlaying = true;
             this.$.playButton.icon = "av:pause";
-            this._targetElement.play();
+            this._targetVideoElement.play();
+            this._targetDrawingElement.clear();
         },
 
         pause: function () {
             this.isPlaying = false;
             this.$.playButton.icon = "av:play-arrow";
-            this._targetElement.pause();
+            this._targetVideoElement.pause();
         },
 
         /**
@@ -250,8 +252,8 @@ Example:
          * @param sender is the element which fired the action with its data.
          */
         sliderChange: function (e, detail, sender) {
-            this._targetElement.currentTime = this.$.slider.immediateValue;
-            //this.fire('iron-signal', {name: 'change', data: sender.immediateValue});
+            this._targetVideoElement.currentTime = this.$.slider.immediateValue;
+            this._targetDrawingElement.clear();
         },
 
         /**
@@ -275,29 +277,27 @@ Example:
          * @param sender the value is binded at the immediateValue data of the element.
          */
         markerClicked: function (event, detail, sender) {
-            var time = this.markers[event.target.dataset.index].time;
-            this.$.slider.value = time;
+            var annotation = this._annotations[event.target.dataset.index];
+            var time = annotation.time;
+            //this.$.slider.value = time;
 
             // update the video
-            this._targetElement.currentTime = time;
+            this._targetVideoElement.currentTime = time;
+
+            // load the annotation
+            //this._targetDrawingElement.addObject(annotation.data);
+            this._targetDrawingElement.loadJSON(annotation.data);
 
             //this.fire('iron-signal', {name: 'change', data: sender.dataset.immediateValue});
         },
 
         loadedmetadata: function(e) {
-            this._setDuration(e.target.duration);
+            if (!this._targetVideoElement.duration) {
+                return;
+            }
+
+            this._setDuration(this._targetVideoElement.duration);
             this.$.slider.max = this.duration;
-
-            //this.push('markers', {time: 12.3});
-
-            // we add some demo data...
-            this.markers = [
-                { time: 0},
-                { time: 3.3},
-                { time: 16.3},
-                { time: 29.4},
-                { time: 38}
-            ];
         },
 
         /**
@@ -307,7 +307,12 @@ Example:
          * @param sender
          */
         timeupdate: function(e) {
-            this.$.slider.value = this._targetElement.currentTime;
+            this.$.slider.value = this._targetVideoElement.currentTime;
+        },
+
+        drawingObjectAdded: function(e) {
+            //this.push('_annotations', {time: this._targetVideoElement.currentTime, type: "drawing", data: e.detail.object});
+            this.push('_annotations', {time: this._targetVideoElement.currentTime, type: "drawing", data: this._targetDrawingElement.toJSON()});
         },
 
         progress_amount: function (e, detail, sender) {

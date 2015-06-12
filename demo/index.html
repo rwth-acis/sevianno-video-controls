@@ -15,18 +15,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <title>sevianno-video-controls Demo</title>
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <link rel="import" href="../sevianno-video-controls.html">
+    <link rel="import" href="../../drawing-overlay/drawing-overlay.html">
 </head>
 <body>
 
 <h2>An example of <code>&lt;sevianno-video-controls&gt;</code>:</h2>
 
-<video id="video1" width="450" height="360">
-    <source src="http://golovin.de/ba/parking.mp4" type="video/mp4">
-</video>
+<drawing-overlay id="drawing1" width="450" height="360">
+    <video id="video1" width="450" height="360">
+        <source src="http://golovin.de/ba/parking.mp4" type="video/mp4">
+    </video>
+</drawing-overlay>
 
 <br>
 
-<sevianno-video-controls target="video1"></sevianno-video-controls>
+<sevianno-video-controls target-video="video1" target-drawing="drawing1"></sevianno-video-controls>
 
 </body>
 </html>
