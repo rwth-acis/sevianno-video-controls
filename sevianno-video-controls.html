@@ -1,5 +1,5 @@
 <!--
-Copyright (c) 2014 Advanced Community Information Systems (ACIS) Group, 
+Copyright (c) 2014 Advanced Community Information Systems (ACIS) Group,
 Chair of Computer Science 5 (Databases & Information Systems), RWTH Aachen University, Germany
 All rights reserved.
 
@@ -205,11 +205,10 @@ Example:
         // Element Behavior
 
         /**
-         * The `drawing-overlay-change` event is fired whenever the drawing is changed, e.g. by adding or
-         * removing lines.
+         * The `sevianno-annotation-added` event is fired whenever an annotation was added.
          *
-         * @event drawing-overlay-change
-         * @detail {{sound: String}}
+         * @event sevianno-annotation-added
+         * @detail {{time: Number, type:String, data: Object}}
          */
 
         _getMarkerStyle: function(marker) {
@@ -313,7 +312,22 @@ Example:
 
         drawingObjectAdded: function(e) {
             //this.push('_annotations', {time: this._targetVideoElement.currentTime, type: "drawing", data: e.detail.object});
-            this.push('_annotations', {time: this._targetVideoElement.currentTime, type: "drawing", data: this._targetDrawingElement.toJSON()});
+            var annotation = {time: this._targetVideoElement.currentTime, type: "drawing", data: this._targetDrawingElement.toJSON()};
+            this.push('_annotations', annotation);
+
+            this.fire("sevianno-annotation-added", annotation);
+        },
+
+        addAnnotation: function(annotation) {
+            for (var i in this._annotations) {
+                if (this._annotations[i].time == annotation.time) {
+                    //this._annotations[i].type = annotation.type;
+                    //this._annotations[i].data = annotation.data;
+                    this.pop('_annotations', this._annotations[i]);
+                    break;
+                }
+            }
+            this.push('_annotations', annotation);
         },
 
         progress_amount: function (e, detail, sender) {
