@@ -257,19 +257,6 @@ Example:
             this._targetDrawingElement.clear();
         },
 
-        /**
-         * The `onPlay` method will start playing a video.
-         *
-         * @method play
-         */
-        onPlay: function () {
-            if (!this.isPlaying) {
-                this.fire('iron-signal', {name: "play"});
-            } else {
-                this.fire('iron-signal', {name: "pause"});
-            }
-        },
-
         lockAddAnnotation: false,
 
         /**
@@ -333,7 +320,7 @@ Example:
                 var annotation = {
                     time: this._targetVideoElement.currentTime,
                     type: "drawing",
-                    data: [JSON.stringify(objectJSON)]
+                    data: objectJSON
                 };
 
                 // now add object to the annotation object's drawing. We could use addAnnotation but since we are in the
@@ -397,9 +384,9 @@ Example:
                 var annotationDrawing = {};
                 annotationDrawing.time = annotation.time;
                 annotationDrawing.type = "drawing";
-                annotationDrawing.objects = [JSON.parse(annotation.data)];
+                annotationDrawing.objects = [annotation.data];
             } else {
-                var object = JSON.parse(annotation.data);
+                var object = annotation.data;
                 annotationDrawing.objects.push(object);
             }
 
