@@ -103,7 +103,7 @@ Example:
         <div>
             <paper-icon-button id="playButton" icon="av:play-arrow" on-tap="playAction"></paper-icon-button>
             <div id="timelines">
-                <paper-slider id="slider" on-change="sliderChange"></paper-slider>
+                <paper-slider id="slider" on-change="sliderChange" step="0.1"></paper-slider>
 
                 <div id = "markers">
                     <template is="dom-repeat" items="{{_annotations}}" as="marker">
@@ -131,6 +131,12 @@ Example:
              * @default []
              * */
             _annotations: [],
+
+            transmission: {
+                type: Number,
+                readOnly: true,
+                value: 4
+            },
 
             isPlaying: {
                 type: Boolean,
@@ -316,9 +322,11 @@ Example:
         drawingObjectAdded: function(e) {
             if (!this.lockAddAnnotation) {
                 var objectJSON = e.detail.object.toJSON();
+                // we round to the nearest 0.5
+                var time = Math.round(this._targetVideoElement.currentTime * 2) / 2;
 
                 var annotation = {
-                    time: this._targetVideoElement.currentTime,
+                    time: time,
                     type: "drawing",
                     data: objectJSON
                 };
