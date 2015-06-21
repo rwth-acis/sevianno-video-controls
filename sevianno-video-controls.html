@@ -431,10 +431,10 @@ Example:
 
                 // save it in the annotations array
                 this.push('_annotations', annotationDrawing);
-            }
 
-            // notify listeners
-            this.fire("sevianno-annotation-added", annotation);
+                // notify listeners
+                this.fire("sevianno-annotation-added", annotation);
+            }
         },
 
         /**
@@ -500,6 +500,9 @@ Example:
                 this._targetDrawingElement.loadJSON(drawing);
                 this.lockAddAnnotation = false;
             }
+
+            // notify listeners
+            this.fire("sevianno-annotation-added", annotation);
         }
 
     });
