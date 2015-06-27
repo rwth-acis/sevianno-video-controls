@@ -82,7 +82,7 @@ Example:
 
                 <div id = "markers">
                     <template is="dom-repeat" items="{{_annotations}}" as="marker">
-                        <div class="verticalLine" on-tap="markerClicked" title$="{{marker.time}}" style$="{{_getMarkerStyle(marker)}}" data-time$="{{marker.time}}"></div>
+                        <div class="verticalLine" on-tap="_markerClicked" title$="{{marker.time}}" style$="{{_getMarkerStyle(marker)}}" data-time$="{{marker.time}}"></div>
                     </template>
                 </div>
             </div>
