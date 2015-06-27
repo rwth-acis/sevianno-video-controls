@@ -103,7 +103,7 @@ Example:
              *
              * @attribute _annotations
              * @type array
-             * @default []
+             * @default [{time: Number, type: String, objects: Array}]
              */
             _annotations: [],
 
@@ -530,6 +530,15 @@ Example:
 
             // notify listeners
             this.fire("sevianno-annotation-added", annotation);
+        },
+
+        /**
+         * Returns all annotations.
+         *
+         * @returns {{time: Number, type: String, objects: Array}[]}
+         */
+        getAnnotations: function() {
+            return this._annotations;
         }
 
     });
