@@ -382,6 +382,9 @@ Example:
          * @param sender
          */
         _timeupdate: function(e) {
+            this._setDuration(this._targetVideoElement.duration);
+            this.$.slider.max = this.duration;
+
             var currentTime = this._targetVideoElement.currentTime;
             this.$.slider.value = currentTime;
 
