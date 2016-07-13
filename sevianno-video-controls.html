@@ -201,7 +201,7 @@ Example:
             this._targetDrawingElement.addEventListener('drawing-overlay-object-added', this._drawingObjectAdded.bind(this));
 
             // listen to mouse:down and stop playing the video
-            this._targetDrawingElement.addEventListener('drawing-overlay-mouse-down', this._drawingMouseDown.bind(this));
+            this._targetDrawingElement.addEventListener('drawing-overlay-path-created', this._drawingPathCreated.bind(this));
         },
 
         detached: function() {
@@ -215,7 +215,7 @@ Example:
             this._targetVideoElement.removeEventListener('ended', this._videoEnded.bind(this));
 
             this._targetDrawingElement.removeEventListener('drawing-overlay-object-added', this._drawingObjectAdded.bind(this));
-            this._targetDrawingElement.addEventListener('drawing-overlay-mouse-down', this._drawingMouseDown.bind(this));
+            this._targetDrawingElement.addEventListener('drawing-overlay-path-created', this._drawingPathCreated.bind(this));
         },
 
         // Element Behavior
@@ -467,11 +467,11 @@ Example:
         },
 
         /**
-         * This is the event listener for the mouse:down event by the canvas. This is usually received
+         * This is the event listener for the path-created event by the canvas. This is usually received
          * when starting a new drawing. Since we don't want the video to start playing while drawing,
          * we clear the transmission timeout and pause the video.
          */
-        _drawingMouseDown: function(e) {
+        _drawingPathCreated: function(e) {
             this.pause();
 
             // clear transmission timeout if there is any
