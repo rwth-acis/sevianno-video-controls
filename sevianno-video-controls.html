@@ -196,12 +196,14 @@ Example:
             this._targetVideoElement.addEventListener('timeupdate', this._timeupdate.bind(this));
             this._targetVideoElement.addEventListener('ended', this._videoEnded.bind(this));
 
-            // now listen to object-added events of the drawing canvas
+            // get drawing overlay
             this._targetDrawingElement = document.getElementById(this.targetDrawing);
-            this._targetDrawingElement.addEventListener('drawing-overlay-object-added', this._drawingObjectAdded.bind(this));
 
-            // listen to mouse:down and stop playing the video
+            // listen to path creation and stop playing the video
             this._targetDrawingElement.addEventListener('drawing-overlay-path-created', this._drawingPathCreated.bind(this));
+
+            // now listen to object-added events of the drawing canvas
+            //this._targetDrawingElement.addEventListener('drawing-overlay-object-added', this._drawingObjectAdded.bind(this));
         },
 
         detached: function() {
