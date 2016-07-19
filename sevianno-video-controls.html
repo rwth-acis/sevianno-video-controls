@@ -201,6 +201,7 @@ Example:
 
             // listen to path creation and stop playing the video
             this._targetDrawingElement.addEventListener('drawing-overlay-path-created', this._drawingPathCreated.bind(this));
+            this._targetDrawingElement.addEventListener('drawing-overlay-path-appended', this._drawingPathAppended.bind(this));
 
             // now listen to object-added events of the drawing canvas
             //this._targetDrawingElement.addEventListener('drawing-overlay-object-added', this._drawingObjectAdded.bind(this));
@@ -216,7 +217,7 @@ Example:
             this._targetVideoElement.removeEventListener('timeupdate', this._timeupdate.bind(this));
             this._targetVideoElement.removeEventListener('ended', this._videoEnded.bind(this));
 
-            this._targetDrawingElement.removeEventListener('drawing-overlay-object-added', this._drawingObjectAdded.bind(this));
+            //this._targetDrawingElement.removeEventListener('drawing-overlay-object-added', this._drawingObjectAdded.bind(this));
             this._targetDrawingElement.addEventListener('drawing-overlay-path-created', this._drawingPathCreated.bind(this));
         },
 
@@ -483,6 +484,71 @@ Example:
             // make sure that after playing the video does not immediately stop again
             var currentTime = Math.round(this._targetVideoElement.currentTime * 2) / 2;
             this._lastTransmissionTime = currentTime;
+
+
+
+
+            if (!this._lockAddAnnotation) {
+                var pathObject = e.detail.object;
+                // we round to the nearest 0.5
+                var currentTime = Math.round(this._targetVideoElement.currentTime * 2) / 2;
+
+                var annotation = {
+                    time: currentTime,
+                    type: "path",
+                    data: pathObject //TODO: this shouldn't overwrite existing paths
+                };
+
+                // now add object to the annotation object's drawing. We could use addAnnotation but since we are in the
+                // listener we can simply get the toJSON() from the canvas instead of building our own drawing object.
+                var annotationDrawing;
+
+                // check if there is already a drawing at the time of the added annotation.
+                for (var i in this._annotations) {
+                    if (this._annotations[i].time === annotation.time) {
+                        // yes, there is a drawing at this time already
+                        annotationDrawing = this._annotations[i];
+
+                        /*
+                        // now check if the object is already included
+                        if (annotationDrawing.paths.indexOf(objectJSON) !== -1) {
+                            return;
+                        }
+                        this._annotations.splice(i, 1);
+                        break;
+                        */
+                    }
+                }
+
+                // check if the drawing is null or undefined
+                if (annotationDrawing == null) {
+                    var annotationDrawing = {};
+                    annotationDrawing.time = annotation.time;
+                    annotationDrawing.type = "path";
+                    annotationDrawing.paths = [];
+                }
+                annotationDrawing.paths.push(pathObject);
+
+                // save it in the annotations array
+                this.push('_annotations', annotationDrawing);
+
+                // notify listeners
+                this.fire("sevianno-annotation-added", annotation);
+            }
+
+
+
+
+
+
+
+        },
+
+        /**
+         * This is the event listener for path-appended events by the drawing-overlay.
+         */
+        _drawingPathAppended: function(e) {
+            //TODO: append path
         },
 
         /**
