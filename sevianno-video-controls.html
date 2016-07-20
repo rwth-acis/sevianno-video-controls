@@ -317,6 +317,8 @@ Example:
             // clear transmission timeout if there is any
             clearTimeout(this._transmissionTimeout);
             this._lastTransmissionTime = null;
+            // clear canvas
+            this._targetDrawingElement.clear();
 
             var time = parseFloat(event.target.dataset.time);
 
@@ -488,9 +490,6 @@ Example:
             var currentTime = Math.round(this._targetVideoElement.currentTime * 2) / 2;
             this._lastTransmissionTime = currentTime;
 
-
-
-
             if (!this._lockAddAnnotation) {
                 var pathObject = e.detail.object;
                 // we round to the nearest 0.5
@@ -529,19 +528,31 @@ Example:
                 this.fire("sevianno-annotation-added", annotation);
             }
 
-
-
-
-
-
-
         },
 
         /**
          * This is the event listener for path-appended events by the drawing-overlay.
          */
         _drawingPathAppended: function(e) {
-            //TODO: append path
+            if (!this._lockAddAnnotation) {
+                var pathObject = e.detail.object;
+
+                var currentTime = this._lastTransmissionTime;
+
+                for (var i in this._annotations) {
+                    if (this._annotations[i].time === currentTime) {
+                        // yes, there is a path at this time already
+                        // otherwise obviously something went wrong
+                        var annotation = this._annotations[i];
+
+                        for (var j in annotation.paths) {
+                            if (annotation.paths[j].id = pathObject.id) {
+                                annotation.paths[j].pathArray.push(pathObject.pathArray[0]);
+                            }
+                        }
+                    }
+                }
+            }
         },
 
         /**
