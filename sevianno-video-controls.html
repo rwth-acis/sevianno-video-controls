@@ -495,7 +495,6 @@ Example:
 
                 var annotation = {
                     time: currentTime,
-                    type: "path",
                     data: pathObject //TODO: this shouldn't overwrite existing paths
                 };
 
@@ -508,15 +507,6 @@ Example:
                     if (this._annotations[i].time === annotation.time) {
                         // yes, there is a drawing at this time already
                         annotationDrawing = this._annotations[i];
-
-                        /*
-                        // now check if the object is already included
-                        if (annotationDrawing.paths.indexOf(objectJSON) !== -1) {
-                            return;
-                        }
-                        this._annotations.splice(i, 1);
-                        break;
-                        */
                     }
                 }
 
