@@ -331,9 +331,12 @@ Example:
                         this._targetVideoElement.currentTime = time;
 
                         // load the annotation
-                        var drawing = {"objects":annotation.objects, "background":""};
+                        var pathObjects = annotation.paths;
                         this._lockAddAnnotation = true;
-                        this._targetDrawingElement.loadJSON(drawing);
+                        for (var j in pathObjects) {
+                            var pathObject = pathObjects[j];
+                            this._targetDrawingElement.createPath(pathObject);
+                        }
                         this._lockAddAnnotation = false;
 
                         break;
