@@ -202,9 +202,6 @@ Example:
             // listen to path creation and stop playing the video
             this._targetDrawingElement.addEventListener('drawing-overlay-path-created', this._drawingPathCreated.bind(this));
             this._targetDrawingElement.addEventListener('drawing-overlay-path-appended', this._drawingPathAppended.bind(this));
-
-            // now listen to object-added events of the drawing canvas
-            //this._targetDrawingElement.addEventListener('drawing-overlay-object-added', this._drawingObjectAdded.bind(this));
         },
 
         detached: function() {
@@ -217,8 +214,8 @@ Example:
             this._targetVideoElement.removeEventListener('timeupdate', this._timeupdate.bind(this));
             this._targetVideoElement.removeEventListener('ended', this._videoEnded.bind(this));
 
-            //this._targetDrawingElement.removeEventListener('drawing-overlay-object-added', this._drawingObjectAdded.bind(this));
-            this._targetDrawingElement.addEventListener('drawing-overlay-path-created', this._drawingPathCreated.bind(this));
+            this._targetDrawingElement.removeEventListener('drawing-overlay-path-created', this._drawingPathCreated.bind(this));
+            this._targetDrawingElement.removeEventListener('drawing-overlay-path-appended', this._drawingPathAppended.bind(this));
         },
 
         // Element Behavior
@@ -525,7 +522,7 @@ Example:
                 this.push('_annotations', annotationDrawing);
 
                 // notify listeners
-                this.fire("sevianno-annotation-added", annotation);
+                this.fire("sevianno-annotation-path-created", annotation);
             }
 
         },
@@ -548,6 +545,13 @@ Example:
                         for (var j in annotation.paths) {
                             if (annotation.paths[j].id === pathObject.id) {
                                 annotation.paths[j].pathArray.push(pathObject.pathArray[0]);
+
+                                // notify listeners
+                                var annotation = {
+                                    time: currentTime,
+                                    data: pathObject
+                                };
+                                this.fire("sevianno-annotation-path-appended", annotation);
                             }
                         }
                     }
